@@ -1,0 +1,8 @@
+__pycache__/
+
+.idea/
+.venv/
+runs/
+assets/football-match-dataset/
+
+yolov8x.pt
