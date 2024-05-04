@@ -15,3 +15,6 @@ The image shows a sample snapshot of detections from a pre-trained YOLOv8x model
 
 The image shows a sample snapshot of detections from a custom-trained YOLOv5 model of a test football match video.
 The dataset used can be found [here](https://universe.roboflow.com/roboflow-jvuqo/football-players-detection-3zvbc/dataset/1#).
+
+## Detection Tracking
+Each bounding box is tracked across frames using multiple factors such as object movement, appearance similarity.

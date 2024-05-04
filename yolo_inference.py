@@ -1,5 +1,5 @@
 from ultralytics import YOLO
-import os, sys
+import sys
 import gdown
 
 from constants import *
