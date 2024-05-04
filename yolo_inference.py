@@ -22,7 +22,8 @@ if not os.path.exists(dataset_video_dir):
 
 test_video_path = dataset_video_dir + '/08fd33_4.mp4'
 
-model = YOLO('yolov8x.pt')
+# model = YOLO('original.pt')
+model = YOLO('models/yolov5/best.pt')
 
 results = model.predict(
     source=test_video_path,
