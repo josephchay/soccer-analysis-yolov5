@@ -1,4 +1,6 @@
 import os
+
+import numpy as np
 from ultralytics import YOLO
 import supervision as sv
 import pickle
@@ -113,7 +115,9 @@ class Tracker:
                           cv2.FILLED)
 
             x1_text = x1_rect + 12
-            if track_id > 99:
+            if track_id > 9:
+                x1_text -= 5
+            elif track_id > 99:
                 x1_text -= 10
 
             cv2.putText(
@@ -125,6 +129,20 @@ class Tracker:
                 (0, 0, 0),
                 2
             )
+
+        return frame
+
+    def draw_traingle(self, frame, bbox, color):
+        y = int(bbox[1])
+        x, _ = get_center_of_bbox(bbox)
+
+        triangle_points = np.array([
+            [x, y],
+            [x-10, y-20],
+            [x+10, y-20],
+        ])
+        cv2.drawContours(frame,  [triangle_points], 0, color,  cv2.FILLED)
+        cv2.drawContours(frame,  [triangle_points], 0, (0, 0, 0), 2)
 
         return frame
 
@@ -145,6 +163,10 @@ class Tracker:
             # Draw Referee
             for _, referee in referee_dict.items():
                 frame = self.draw_ellipse(frame, referee["bbox"], (0, 255, 255))
+
+            # Draw ball
+            for track_id, ball in ball_dict.items():
+                frame = self.draw_traingle(frame, ball["bbox"], (0, 255, 0))
 
             output_video_frames.append(frame)
 
