@@ -83,7 +83,8 @@ class Tracker:
 
         return tracks
 
-    def draw_ellipse(self, frame, bbox, color, track_id=None):
+    @staticmethod
+    def draw_ellipse(frame, bbox, color, track_id=None):
         y2 = int(bbox[3])
         x_center, _ = get_center_of_bbox(bbox)
         width = get_bbox_width(bbox)
@@ -132,7 +133,8 @@ class Tracker:
 
         return frame
 
-    def draw_traingle(self, frame, bbox, color):
+    @staticmethod
+    def draw_triangle(frame, bbox, color):
         y = int(bbox[1])
         x, _ = get_center_of_bbox(bbox)
 
@@ -157,7 +159,7 @@ class Tracker:
 
             # Draw Players
             for track_id, player in player_dict.items():
-                color = player.get("team_color", (0, 0, 255))
+                color = player.get("team_color", (0, 0, 255))  # Default color is red
                 frame = self.draw_ellipse(frame, player["bbox"], color, track_id)
 
             # Draw Referee
@@ -166,7 +168,7 @@ class Tracker:
 
             # Draw ball
             for track_id, ball in ball_dict.items():
-                frame = self.draw_traingle(frame, ball["bbox"], (0, 255, 0))
+                frame = self.draw_triangle(frame, ball["bbox"], (0, 255, 0))
 
             output_video_frames.append(frame)
 
