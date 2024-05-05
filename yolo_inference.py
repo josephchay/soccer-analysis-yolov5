@@ -6,12 +6,12 @@ from constants import *
 from utils.filesystem import *
 
 # Check if the datasets already exists
-if not os.path.exists(dataset_video_dir):
+if not os.path.exists(DATASET_VIDEO_DIR):
     os.makedirs('assets', exist_ok=True)
 
-    down_destination = dataset_video_dir + '.zip'
+    down_destination = DATASET_VIDEO_DIR + '.zip'
 
-    gdown.download(dataset_video_url, down_destination, quiet=False)
+    gdown.download(DATASET_VIDEO_URL, down_destination, quiet=False)
     print("Downloaded dataset video zip file")
 
     try:
@@ -20,7 +20,7 @@ if not os.path.exists(dataset_video_dir):
         name = os.path.basename(sys.argv[0])
         print("At file: " + name[:name.rfind('.')] + ", unable to extract " + down_destination + " to " + 'assets')
 
-test_video_path = dataset_video_dir + '/08fd33_4.mp4'
+test_video_path = DATASET_VIDEO_DIR + '/08fd33_4.mp4'
 
 # model = YOLO('original.pt')
 model = YOLO('models/yolov5/best.pt')

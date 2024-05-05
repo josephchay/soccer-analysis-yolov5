@@ -48,3 +48,9 @@ Then the ball's detection can be placed roughly along the line of the two points
 ![image](https://github.com/josephchay/football-analysis-yolov5/assets/136827046/4ad6b925-eec8-4503-adaa-e62e225aacd1)
 
 However, sometimes, it's possible that sometimes the detection position can be slightly off due to the interpolation method used.
+
+### Ball Handler Detection
+![image](https://github.com/josephchay/football-analysis-yolov5/assets/136827046/1fce4a93-73fe-42ca-a209-b7e5f75aa3c0)
+The ball is determined to which player is the closest by comparing the distances between the ball's center and the bottom corners of each player's bounding box.
+All the players are iterated over, comparing the computed distances with the threshold, and keeps track of the minimum distance found.
+If a player is within the threshold and closer than any previously checked players, they are assigned as the closest to the ball.

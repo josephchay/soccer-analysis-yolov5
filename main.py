@@ -2,52 +2,72 @@ import os
 import cv2
 
 from constants import *
+from player_ball_assigner import BallAssigner
 from team_assigner import TeamAssigner
 from utils import read_video, save_video
 from trackers import Tracker
 
 
-def save_player_imgs(tracks, video_frames, save_dir='outputs/players'):
-    # Save the cropped images of the players
-    for track_id, player in tracks['players'][0].items():
-        bbox = player['bbox']
-        frame = video_frames[0]
+class Main:
+    def __init__(self, model_path):
+        os.makedirs('outputs', exist_ok=True)
 
-        # crop bbox from frame
-        cropped_img = frame[int(bbox[1]):int(bbox[3]), int(bbox[0]):int(bbox[2])]  # y1:y2, x1:x2
+        self.tracker = Tracker(model_path)
+        self.video_frames = []
+        self.tracks = {}
 
-        # save cropped image
-        cv2.imwrite(f'{save_dir}/player_{track_id}.jpg', cropped_img)
+        self.team_assigner = TeamAssigner()
+        self.ball_assigner = BallAssigner()
 
+    def save_player_imgs(self, video_frames, save_dir='outputs/players'):
+        # Save the cropped images of the players
+        for track_id, player in self.tracks['players'][0].items():
+            bbox = player['bbox']
+            frame = video_frames[0]
 
-def main():
-    os.makedirs('outputs', exist_ok=True)
+            # crop bbox from frame
+            cropped_img = frame[int(bbox[1]):int(bbox[3]), int(bbox[0]):int(bbox[2])]  # y1:y2, x1:x2
 
-    video_frames = read_video(dataset_video_dir + '/08fd33_4.mp4')
+            # save cropped image
+            cv2.imwrite(f'{save_dir}/player_{track_id}.jpg', cropped_img)
 
-    tracker = Tracker('models/yolov5/best.pt')
-    tracks = tracker.get_object_tracks(video_frames,
-                                       read_from_stub=True,
-                                       stub_path='stubs/08fd33_4.pkl')
+    def run(self):
+        self.video_frames = read_video(DATASET_VIDEO_DIR + '/08fd33_4.mp4')
 
-    tracks['ball'] = tracker.interpolate_ball_positions(tracks['ball'])
+        self.tracks = self.tracker.get_object_tracks(self.video_frames,
+                                                     read_from_stub=True,
+                                                     stub_path='stubs/08fd33_4.pkl')
 
-    # save_player_imgs(tracks, video_frames)
+        self.tracks['ball'] = self.tracker.interpolate_ball_positions(self.tracks['ball'])
 
-    team_assigner = TeamAssigner()
-    team_assigner.assign_team_color(video_frames[0], tracks['players'][0])
+        # save_player_imgs(tracks, video_frames)
 
-    for frame_num, player_track in enumerate(tracks['players']):
-        for player_id, track in player_track.items():
-            team = team_assigner.get_player_team(video_frames[frame_num], track['bbox'], player_id)
+        self.assign_team_colors()
+        self.assign_ball_handler()
 
-            tracks['players'][frame_num][player_id]['team'] = team
-            tracks['players'][frame_num][player_id]['team_color'] = team_assigner.team_colors[team]
+        output_video_frames = self.tracker.draw_annotations(self.video_frames, self.tracks)
 
-    output_video_frames = tracker.draw_annotations(video_frames, tracks)
+        save_video(output_video_frames, 'outputs/08fd33_4.avi')
 
-    save_video(output_video_frames, 'outputs/08fd33_4.avi')
+    def assign_team_colors(self):
+        self.team_assigner.assign_team_color(self.video_frames[0], self.tracks['players'][0])
+
+        for frame_num, player_track in enumerate(self.tracks['players']):
+            for player_id, track in player_track.items():
+                team = self.team_assigner.get_player_team(self.video_frames[frame_num], track['bbox'], player_id)
+
+                self.tracks['players'][frame_num][player_id]['team'] = team
+                self.tracks['players'][frame_num][player_id]['team_color'] = self.team_assigner.team_colors[team]
+
+    def assign_ball_handler(self):
+        for frame_num, player_track in enumerate(self.tracks['players']):
+            ball_bbox = self.tracks['ball'][frame_num][1]['bbox']
+            assigned_ball_handler = self.ball_assigner.assign_to_player(player_track, ball_bbox)
+
+            if assigned_ball_handler != -1:
+                self.tracks['players'][frame_num][assigned_ball_handler]['has_ball'] = True
 
 
 if __name__ == "__main__":
-    main()
+    main = Main(BEST_MODEL_PATH)
+    main.run()

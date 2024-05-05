@@ -1,2 +1,3 @@
-dataset_video_url = 'https://drive.google.com/uc?id=1CyZVT9RdZzS3NYk7XVgnjahEIhOwuXmb'
-dataset_video_dir = 'assets/football-match-dataset'
+DATASET_VIDEO_URL = 'https://drive.google.com/uc?id=1CyZVT9RdZzS3NYk7XVgnjahEIhOwuXmb'
+DATASET_VIDEO_DIR = 'assets/football-match-dataset'
+BEST_MODEL_PATH = 'models/yolov5/best.pt'
