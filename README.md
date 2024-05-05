@@ -38,3 +38,13 @@ After applying KMeans clustering, the resulting clusters are then used to identi
 It considers the corners of the images, which are most likely to represent the background. 
 By determining the most frequent cluster in these corner pixels, the cluster that corresponds to the background is identified, by which the opposite is considered to be the player. 
 With the player’s cluster identified, the centroid of this cluster—calculated by KMeans as the mean of the cluster’s color values—represents the dominant color of the player's uniform.
+
+### Ball Detection Interpretation between Frames
+![image](https://github.com/josephchay/football-analysis-yolov5/assets/136827046/8fbbcba5-6664-4a51-8b97-c3784092b80d)
+
+Occasionally, between frames, the ball is not being detected. Interpolation can be done between frames to estimate the ball's position by considering the two closest frames where the ball was detected.
+Then the ball's detection can be placed roughly along the line of the two points. 
+
+![image](https://github.com/josephchay/football-analysis-yolov5/assets/136827046/4ad6b925-eec8-4503-adaa-e62e225aacd1)
+
+However, sometimes, it's possible that sometimes the detection position can be slightly off due to the interpolation method used.

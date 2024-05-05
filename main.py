@@ -30,7 +30,9 @@ def main():
                                        read_from_stub=True,
                                        stub_path='stubs/08fd33_4.pkl')
 
-    save_player_imgs(tracks, video_frames)
+    tracks['ball'] = tracker.interpolate_ball_positions(tracks['ball'])
+
+    # save_player_imgs(tracks, video_frames)
 
     team_assigner = TeamAssigner()
     team_assigner.assign_team_color(video_frames[0], tracks['players'][0])
