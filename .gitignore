@@ -4,7 +4,7 @@ __pycache__/
 .venv/
 runs/
 assets/football-match-dataset/
+assets/models/
 outputs/
-models/
 
 training/football-players-detection-1/

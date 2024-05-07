@@ -17,7 +17,7 @@ class TeamAssigner:
         kmeans = KMeans(
             n_clusters=2,  # 2 clusters for player and non-player
             init="k-means++",
-            n_init=1,
+            n_init=10,
         )
         kmeans.fit(image_2d)
 
