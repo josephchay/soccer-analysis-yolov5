@@ -51,11 +51,13 @@ However, sometimes, it's possible that sometimes the detection position can be s
 
 ### Ball Handler Detection
 ![image](https://github.com/josephchay/football-analysis-yolov5/assets/136827046/1fce4a93-73fe-42ca-a209-b7e5f75aa3c0)
+
 The ball is determined to which player is the closest by comparing the distances between the ball's center and the bottom corners of each player's bounding box.
 All the players are iterated over, comparing the computed distances with the threshold, and keeps track of the minimum distance found.
 If a player is within the threshold and closer than any previously checked players, they are assigned as the closest to the ball.
 
 ### Team Ball Control
 ![image](https://github.com/josephchay/football-analysis-yolov5/assets/136827046/e73abe50-76a9-4ba9-9e0c-ad3da75fcf4a)
+
 The control for both sides of the team is calculated by capturing all the history frames up to the current frame, of which team controlled the ball at each frame.
 It calculates the control percentage for each team by dividing the number of frames each team controlled the ball by the total number of frames in which either team had control.
