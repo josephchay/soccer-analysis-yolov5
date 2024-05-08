@@ -4,10 +4,12 @@ import numpy as np
 
 from constants import *
 from player_ball_assigner import BallAssigner
+from speed_and_distance_estimator import SpeedAndDistanceEstimator
 from team_assigner import TeamAssigner
 from utils import read_video, save_video
 from trackers import Tracker
 from camera_movement import CameraMovement
+from view_transformer import ViewTransformer
 
 
 class Main:
@@ -50,16 +52,18 @@ class Main:
         self.tracker.add_position_to_tracks(self.tracks)
 
         # camera movement
-        camera_movement = CameraMovement(self.video_frames[0])
-        camera_movement_per_frame = camera_movement.get_camera_movement(self.video_frames,
-                                                                        read_from_stub=True,
-                                                                        stub_path='stubs/camera_movement.pkl')
+        camera_movement, camera_movement_per_frame = self.track_camera_movement()
 
-        camera_movement.add_adjust_positions_to_tracks(self.tracks, camera_movement_per_frame)
+        # view transformation
+        view_transformer = ViewTransformer()
+        view_transformer.add_transformed_position_to_tracks(self.tracks)
 
         self.tracks['ball'] = self.tracker.interpolate_ball_positions(self.tracks['ball'])
 
         # self.save_player_imgs()
+
+        speed_and_distance_estimator = SpeedAndDistanceEstimator()
+        speed_and_distance_estimator.add_speed_and_distance_to_tracks(self.tracks)
 
         self.assign_team_colors()
         self.assign_ball_handles()
@@ -68,7 +72,18 @@ class Main:
 
         output_video_frames = camera_movement.draw_camera_movement(output_video_frames, camera_movement_per_frame)
 
+        speed_and_distance_estimator.draw_speed_and_distance(output_video_frames, self.tracks)
+
         save_video(output_video_frames, 'outputs/08fd33_4.avi')
+
+    def track_camera_movement(self):
+        camera_movement = CameraMovement(self.video_frames[0])
+        camera_movement_per_frame = camera_movement.get_camera_movement(self.video_frames,
+                                                                        read_from_stub=True,
+                                                                        stub_path='stubs/camera_movement.pkl')
+        camera_movement.add_adjust_positions_to_tracks(self.tracks, camera_movement_per_frame)
+
+        return camera_movement, camera_movement_per_frame
 
     def assign_team_colors(self):
         self.team_assigner.assign_team_color(self.video_frames[0], self.tracks['players'][0])

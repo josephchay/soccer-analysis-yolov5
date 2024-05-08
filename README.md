@@ -71,3 +71,19 @@ It processes the first frame to grayscale and uses `cv2.goodFeaturesToTrack` to 
 These points, which ideally represent stable features in the environment, are then tracked frame-to-frame using `cv2.calcOpticalFlowPyrLK`, which calculates the optical flow to estimate how each point has moved between the current and subsequent frames. 
 For each new frame, it compares the new position of these points against their original positions to determine the camera's movement. 
 The greatest distance a point has moved (if it exceeds a minimal distance threshold) is recorded as the camera movement for that frame. This is crucial for applications that require understanding of scene dynamics or camera stability, such as video stabilization and motion analysis.
+
+### Perspective Transformation
+![image](https://github.com/josephchay/football-analysis-yolov5/assets/136827046/f1f814e7-7aa2-4462-8a18-d210bdbcaa94)
+
+The `ViewTransformer` class transforms points from a video frame's perspective to a normalized top-view perspective of a football field, enhancing the analysis of player movements by standardizing the viewpoint. 
+Upon initialization, it defines the pixel coordinates (`pixel_vertices`) of the corners of the football court as seen in the video and maps these to the actual dimensions of the court (`target_vertices`) in meters. 
+The class uses OpenCV's `cv2.getPerspectiveTransform` to compute a transformation matrix that aligns these two sets of coordinates. 
+The `transform_point` method then checks if a given point (representing a player's position) is within the defined court area and, if so, applies the transformation matrix to convert this point to the top-view perspective. 
+This transformation is integrated into player tracking data through the `add_transformed_position_to_tracks` method, which iteratively applies the transformation to each tracked player's position across video frames, thereby allowing precise tracking of player movements relative to the real-world dimensions of the football field.
+
+![image](https://github.com/josephchay/football-analysis-yolov5/assets/136827046/2fccf006-8350-434f-85e0-3abe3903e3b8)
+
+The `SpeedAndDistanceEstimator` class complements the `ViewTransformer` by calculating and annotating the speed and distance traveled by each player in a football video analysis. 
+Upon initialization, it sets parameters for frame intervals and the video frame rate to facilitate these calculations. 
+Using transformed player positions from the `ViewTransformer`, the class determines the distance between positions at specified frame intervals and computes the speed in m/s and km/h. 
+These metrics are then dynamically annotated on the video frames for each player, excluding the ball and referees. 
