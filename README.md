@@ -61,3 +61,13 @@ If a player is within the threshold and closer than any previously checked playe
 
 The control for both sides of the team is calculated by capturing all the history frames up to the current frame, of which team controlled the ball at each frame.
 It calculates the control percentage for each team by dividing the number of frames each team controlled the ball by the total number of frames in which either team had control.
+
+### Camera Movement Tracking
+![image](https://github.com/josephchay/football-analysis-yolov5/assets/136827046/b728caa3-e9c4-44c2-8389-fcac2371cdfb)
+
+The `CameraMovement` class method `get_camera_movement` handles the task of detecting camera movement over a sequence of video frames, starting with an initial frame and continuing through subsequent frames.
+An array `camera_movement` is used to store the movement detected in each frame, starting with zero movement assumed for the initial frame. 
+It processes the first frame to grayscale and uses `cv2.goodFeaturesToTrack` to detect points of interest based on the provided feature parameters. 
+These points, which ideally represent stable features in the environment, are then tracked frame-to-frame using `cv2.calcOpticalFlowPyrLK`, which calculates the optical flow to estimate how each point has moved between the current and subsequent frames. 
+For each new frame, it compares the new position of these points against their original positions to determine the camera's movement. 
+The greatest distance a point has moved (if it exceeds a minimal distance threshold) is recorded as the camera movement for that frame. This is crucial for applications that require understanding of scene dynamics or camera stability, such as video stabilization and motion analysis.

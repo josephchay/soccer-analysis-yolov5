@@ -7,6 +7,7 @@ from player_ball_assigner import BallAssigner
 from team_assigner import TeamAssigner
 from utils import read_video, save_video
 from trackers import Tracker
+from camera_movement import CameraMovement
 
 
 class Main:
@@ -46,6 +47,16 @@ class Main:
                                                      read_from_stub=True,
                                                      stub_path='stubs/08fd33_4.pkl')
 
+        self.tracker.add_position_to_tracks(self.tracks)
+
+        # camera movement
+        camera_movement = CameraMovement(self.video_frames[0])
+        camera_movement_per_frame = camera_movement.get_camera_movement(self.video_frames,
+                                                                        read_from_stub=True,
+                                                                        stub_path='stubs/camera_movement.pkl')
+
+        camera_movement.add_adjust_positions_to_tracks(self.tracks, camera_movement_per_frame)
+
         self.tracks['ball'] = self.tracker.interpolate_ball_positions(self.tracks['ball'])
 
         # self.save_player_imgs()
@@ -54,6 +65,8 @@ class Main:
         self.assign_ball_handles()
 
         output_video_frames = self.tracker.draw_annotations(self.video_frames, self.tracks, self.team_ball_control)
+
+        output_video_frames = camera_movement.draw_camera_movement(output_video_frames, camera_movement_per_frame)
 
         save_video(output_video_frames, 'outputs/08fd33_4.avi')
 
