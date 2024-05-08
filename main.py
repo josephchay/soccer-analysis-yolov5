@@ -62,7 +62,10 @@ class Main:
 
         # self.save_player_imgs()
 
-        speed_and_distance_estimator = SpeedAndDistanceEstimator()
+        speed_and_distance_estimator = SpeedAndDistanceEstimator(
+            frame_window=5,
+            frame_rate=FPS
+        )
         speed_and_distance_estimator.add_speed_and_distance_to_tracks(self.tracks)
 
         self.assign_team_colors()
@@ -74,7 +77,11 @@ class Main:
 
         speed_and_distance_estimator.draw_speed_and_distance(output_video_frames, self.tracks)
 
-        save_video(output_video_frames, 'outputs/08fd33_4.avi')
+        save_video(
+            output_video_frames=output_video_frames,
+            output_video_path='outputs/08fd33_4.avi',
+            fps=FPS
+        )
 
     def track_camera_movement(self):
         camera_movement = CameraMovement(self.video_frames[0])

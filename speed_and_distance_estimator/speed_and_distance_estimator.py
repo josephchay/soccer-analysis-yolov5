@@ -4,9 +4,9 @@ from utils import measure_distance, get_foot_position
 
 
 class SpeedAndDistanceEstimator:
-    def __init__(self):
-        self.frame_window = 5
-        self.frame_rate = 24
+    def __init__(self, frame_window, frame_rate):
+        self.frame_window = frame_window
+        self.frame_rate = frame_rate
 
     def add_speed_and_distance_to_tracks(self, tracks):
         total_distance = {}
